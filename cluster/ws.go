@@ -25,6 +25,7 @@ import (
 	"net"
 	"time"
 
+	"github.com/baili2023/nano/internal/env"
 	"github.com/gorilla/websocket"
 )
 
@@ -59,6 +60,12 @@ func (c *wsConn) Read(b []byte) (int, error) {
 	if err != nil && err != io.EOF {
 		return n, err
 	} else if err == io.EOF {
+		// 新增读超时设置 为心跳间隔时间的2倍
+		err := c.conn.SetReadDeadline(time.Now().Add(time.Second * (env.Heartbeat * 2)))
+		if err != nil {
+			return 0, err
+		}
+
 		_, r, err := c.conn.NextReader()
 		if err != nil {
 			return 0, err
