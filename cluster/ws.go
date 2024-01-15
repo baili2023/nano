@@ -80,7 +80,13 @@ func (c *wsConn) Read(b []byte) (int, error) {
 // Write can be made to time out and return an Error with Timeout() == true
 // after a fixed time limit; see SetDeadline and SetWriteDeadline.
 func (c *wsConn) Write(b []byte) (int, error) {
-	err := c.conn.WriteMessage(websocket.BinaryMessage, b)
+	// 新增写超时设置 为心跳间隔时间的2倍
+	err := c.conn.SetWriteDeadline(time.Now().Add(time.Second * (env.Heartbeat * 2)))
+	if err != nil {
+		return 0, err
+	}
+
+	err = c.conn.WriteMessage(websocket.BinaryMessage, b)
 	if err != nil {
 		return 0, err
 	}
