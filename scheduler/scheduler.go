@@ -35,6 +35,8 @@ const (
 	sessionCloseBacklog = 1 << 8
 )
 
+// TODO 需要实现一种 带消息队列的
+// TODO 一种不带消息队列的直接发送的
 // LocalScheduler schedules task to a customized goroutine
 type LocalScheduler interface {
 	Schedule(Task)
