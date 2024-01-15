@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/baili2023/nano/component"
+	"github.com/baili2023/nano/examples/demo/tadpole/logic/protocol"
+	"github.com/baili2023/nano/session"
+
+	"github.com/baili2023/nano"
 	"github.com/google/uuid"
-	"nano"
-	"nano/component"
-	"nano/examples/demo/tadpole/logic/protocol"
-	"nano/session"
 )
 
 // World contains all tadpoles

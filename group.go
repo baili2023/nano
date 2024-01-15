@@ -25,10 +25,10 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"nano/internal/env"
-	"nano/internal/log"
-	"nano/internal/message"
-	"nano/session"
+	"github.com/baili2023/nano/internal/env"
+	"github.com/baili2023/nano/internal/log"
+	"github.com/baili2023/nano/internal/message"
+	"github.com/baili2023/nano/session"
 )
 
 const (

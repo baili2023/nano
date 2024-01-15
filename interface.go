@@ -30,12 +30,12 @@ import (
 	"syscall"
 	"time"
 
-	"nano/cluster"
-	"nano/component"
-	"nano/internal/env"
-	"nano/internal/log"
-	"nano/internal/runtime"
-	"nano/scheduler"
+	"github.com/baili2023/nano/cluster"
+	"github.com/baili2023/nano/component"
+	"github.com/baili2023/nano/internal/env"
+	"github.com/baili2023/nano/internal/log"
+	"github.com/baili2023/nano/internal/runtime"
+	"github.com/baili2023/nano/scheduler"
 )
 
 var running int32

@@ -30,16 +30,16 @@ import (
 	"sync"
 	"time"
 
+	"github.com/baili2023/nano/cluster/clusterpb"
+	"github.com/baili2023/nano/component"
+	"github.com/baili2023/nano/internal/env"
+	"github.com/baili2023/nano/internal/log"
+	"github.com/baili2023/nano/internal/message"
+	"github.com/baili2023/nano/pipeline"
+	"github.com/baili2023/nano/scheduler"
+	"github.com/baili2023/nano/session"
 	"github.com/gorilla/websocket"
 	"google.golang.org/grpc"
-	"nano/cluster/clusterpb"
-	"nano/component"
-	"nano/internal/env"
-	"nano/internal/log"
-	"nano/internal/message"
-	"nano/pipeline"
-	"nano/scheduler"
-	"nano/session"
 )
 
 // Options contains some configurations for current node

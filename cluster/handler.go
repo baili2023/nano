@@ -32,17 +32,17 @@ import (
 	"sync"
 	"time"
 
+	"github.com/baili2023/nano/cluster/clusterpb"
+	"github.com/baili2023/nano/component"
+	"github.com/baili2023/nano/internal/codec"
+	"github.com/baili2023/nano/internal/env"
+	"github.com/baili2023/nano/internal/log"
+	"github.com/baili2023/nano/internal/message"
+	"github.com/baili2023/nano/internal/packet"
+	"github.com/baili2023/nano/pipeline"
+	"github.com/baili2023/nano/scheduler"
+	"github.com/baili2023/nano/session"
 	"github.com/gorilla/websocket"
-	"nano/cluster/clusterpb"
-	"nano/component"
-	"nano/internal/codec"
-	"nano/internal/env"
-	"nano/internal/log"
-	"nano/internal/message"
-	"nano/internal/packet"
-	"nano/pipeline"
-	"nano/scheduler"
-	"nano/session"
 )
 
 var (
@@ -335,14 +335,14 @@ func (h *LocalHandler) findMembers(service string) []*clusterpb.MemberInfo {
 func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Message, noCopy bool) {
 	index := strings.LastIndex(msg.Route, ".")
 	if index < 0 {
-		log.Println(fmt.Sprintf("nano/handler: invalid route %s", msg.Route))
+		log.Println(fmt.Sprintf("github.com/baili2023/nano/handler: invalid route %s", msg.Route))
 		return
 	}
 
 	service := msg.Route[:index]
 	members := h.findMembers(service)
 	if len(members) == 0 {
-		log.Println(fmt.Sprintf("nano/handler: %s not found(forgot registered?)", msg.Route))
+		log.Println(fmt.Sprintf("github.com/baili2023/nano/handler: %s not found(forgot registered?)", msg.Route))
 		return
 	}
 
@@ -490,7 +490,7 @@ func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, 
 
 	index := strings.LastIndex(msg.Route, ".")
 	if index < 0 {
-		log.Println(fmt.Sprintf("nano/handler: invalid route %s", msg.Route))
+		log.Println(fmt.Sprintf("github.com/baili2023/nano/handler: invalid route %s", msg.Route))
 		return
 	}
 

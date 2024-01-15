@@ -1,10 +1,11 @@
 package protobuf
 
 import (
-	"google.golang.org/protobuf/proto"
 	"testing"
 
-	"nano/benchmark/testdata"
+	"google.golang.org/protobuf/proto"
+
+	"github.com/baili2023/nano/benchmark/testdata"
 )
 
 func TestProtobufSerialezer_Serialize(t *testing.T) {

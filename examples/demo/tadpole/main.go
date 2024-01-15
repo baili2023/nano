@@ -5,20 +5,21 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/baili2023/nano/component"
+	"github.com/baili2023/nano/examples/demo/tadpole/logic"
+	"github.com/baili2023/nano/serialize/json"
+
+	"github.com/baili2023/nano"
 	"github.com/urfave/cli"
-	"nano"
-	"nano/component"
-	"nano/examples/demo/tadpole/logic"
-	"nano/serialize/json"
 )
 
 func main() {
 	app := cli.NewApp()
 
 	app.Name = "tadpole"
-	app.Author = "nano authors"
+	app.Author = "github.com/baili2023/nano authors"
 	app.Version = "0.0.1"
-	app.Copyright = "nano authors reserved"
+	app.Copyright = "github.com/baili2023/nano authors reserved"
 	app.Usage = "tadpole"
 
 	// flags

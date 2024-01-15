@@ -27,8 +27,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/baili2023/nano/internal/env"
 	"google.golang.org/grpc"
-	"nano/internal/env"
 )
 
 type connPool struct {

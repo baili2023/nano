@@ -5,13 +5,13 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/baili2023/nano/benchmark/io"
+	"github.com/baili2023/nano/benchmark/testdata"
+	"github.com/baili2023/nano/cluster"
+	"github.com/baili2023/nano/component"
+	"github.com/baili2023/nano/scheduler"
+	"github.com/baili2023/nano/session"
 	. "github.com/pingcap/check"
-	"nano/benchmark/io"
-	"nano/benchmark/testdata"
-	"nano/cluster"
-	"nano/component"
-	"nano/scheduler"
-	"nano/session"
 )
 
 type nodeSuite struct{}

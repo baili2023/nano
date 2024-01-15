@@ -1,6 +1,6 @@
 package gate
 
-import "nano/component"
+import "github.com/baili2023/nano/component"
 
 var (
 	// All services in master server

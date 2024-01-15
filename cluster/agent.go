@@ -28,14 +28,14 @@ import (
 	"sync/atomic"
 	"time"
 
-	"nano/internal/codec"
-	"nano/internal/env"
-	"nano/internal/log"
-	"nano/internal/message"
-	"nano/internal/packet"
-	"nano/pipeline"
-	"nano/scheduler"
-	"nano/session"
+	"github.com/baili2023/nano/internal/codec"
+	"github.com/baili2023/nano/internal/env"
+	"github.com/baili2023/nano/internal/log"
+	"github.com/baili2023/nano/internal/message"
+	"github.com/baili2023/nano/internal/packet"
+	"github.com/baili2023/nano/pipeline"
+	"github.com/baili2023/nano/scheduler"
+	"github.com/baili2023/nano/session"
 )
 
 const (

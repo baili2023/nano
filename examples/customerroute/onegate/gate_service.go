@@ -2,10 +2,11 @@ package onegate
 
 import (
 	"fmt"
+
+	"github.com/baili2023/nano/component"
+	"github.com/baili2023/nano/examples/cluster/protocol"
+	"github.com/baili2023/nano/session"
 	"github.com/pingcap/errors"
-	"nano/component"
-	"nano/examples/cluster/protocol"
-	"nano/session"
 )
 
 type RegisterService struct {

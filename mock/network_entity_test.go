@@ -23,8 +23,8 @@ package mock_test
 import (
 	"testing"
 
+	"github.com/baili2023/nano/mock"
 	. "github.com/pingcap/check"
-	"nano/mock"
 )
 
 type networkEntitySuite struct{}

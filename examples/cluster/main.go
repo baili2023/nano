@@ -7,15 +7,16 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/baili2023/nano/cluster"
+	"github.com/baili2023/nano/examples/cluster/chat"
+	"github.com/baili2023/nano/examples/cluster/gate"
+	"github.com/baili2023/nano/examples/cluster/master"
+	"github.com/baili2023/nano/serialize/json"
+	"github.com/baili2023/nano/session"
+
+	"github.com/baili2023/nano"
 	"github.com/pingcap/errors"
 	"github.com/urfave/cli"
-	"nano"
-	"nano/cluster"
-	"nano/examples/cluster/chat"
-	"nano/examples/cluster/gate"
-	"nano/examples/cluster/master"
-	"nano/serialize/json"
-	"nano/session"
 )
 
 func main() {

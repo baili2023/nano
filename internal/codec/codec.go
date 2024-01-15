@@ -24,7 +24,7 @@ import (
 	"bytes"
 	"errors"
 
-	"nano/internal/packet"
+	"github.com/baili2023/nano/internal/packet"
 )
 
 // Codec constants.

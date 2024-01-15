@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"time"
 
-	"nano/cluster/clusterpb"
+	"github.com/baili2023/nano/cluster/clusterpb"
 )
 
 type Member struct {

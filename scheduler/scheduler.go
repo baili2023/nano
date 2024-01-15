@@ -26,8 +26,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"nano/internal/env"
-	"nano/internal/log"
+	"github.com/baili2023/nano/internal/env"
+	"github.com/baili2023/nano/internal/log"
 )
 
 const (

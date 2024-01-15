@@ -13,11 +13,13 @@ import (
 	"time"
 
 	"fmt"
-	"nano"
-	"nano/benchmark/testdata"
-	"nano/component"
-	"nano/serialize/protobuf"
-	"nano/session"
+
+	"github.com/baili2023/nano/benchmark/testdata"
+	"github.com/baili2023/nano/component"
+	"github.com/baili2023/nano/serialize/protobuf"
+	"github.com/baili2023/nano/session"
+
+	"github.com/baili2023/nano"
 )
 
 const (

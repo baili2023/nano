@@ -7,12 +7,13 @@ import (
 	"strings"
 	"time"
 
-	"nano"
-	"nano/component"
-	"nano/pipeline"
-	"nano/scheduler"
-	"nano/serialize/json"
-	"nano/session"
+	"github.com/baili2023/nano/component"
+	"github.com/baili2023/nano/pipeline"
+	"github.com/baili2023/nano/scheduler"
+	"github.com/baili2023/nano/serialize/json"
+	"github.com/baili2023/nano/session"
+
+	"github.com/baili2023/nano"
 )
 
 type (

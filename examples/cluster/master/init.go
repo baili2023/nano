@@ -1,8 +1,8 @@
 package master
 
 import (
-	"nano/component"
-	"nano/session"
+	"github.com/baili2023/nano/component"
+	"github.com/baili2023/nano/session"
 )
 
 var (

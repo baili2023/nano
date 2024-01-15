@@ -26,7 +26,7 @@ import (
 	"fmt"
 	"strings"
 
-	"nano/internal/log"
+	"github.com/baili2023/nano/internal/log"
 )
 
 // Type represents the type of message, which could be Request/Notify/Response/Push
