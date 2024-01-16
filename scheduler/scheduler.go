@@ -35,8 +35,6 @@ const (
 	sessionCloseBacklog = 1 << 8
 )
 
-// TODO 需要实现一种 带消息队列的
-// TODO 一种不带消息队列的直接发送的
 // LocalScheduler schedules task to a customized goroutine
 type LocalScheduler interface {
 	Schedule(Task)
@@ -45,6 +43,47 @@ type LocalScheduler interface {
 type Task func()
 
 type Hook func()
+
+type DefaultQueueScheduler struct {
+	chTasks chan Task
+}
+
+func NewDefaultQueueScheduler() *DefaultQueueScheduler {
+	return &DefaultQueueScheduler{chTasks: make(chan Task, 1<<8)}
+}
+
+// 往队列中发送消息
+func (localScheduler *DefaultQueueScheduler) Schedule(task Task) {
+	localScheduler.chTasks <- task
+}
+
+// 去消费队列里面的消息
+func (localScheduler *DefaultQueueScheduler) Sched() {
+	defer func() {
+		close(localScheduler.chTasks)
+	}()
+
+	for {
+		select {
+		case f := <-chTasks:
+			try(f)
+		case <-chDie:
+			return
+		}
+	}
+}
+
+// 无消息队列的任务处理
+type DefaultScheduler struct{}
+
+func NewDefaultScheduler() *DefaultScheduler {
+	return &DefaultScheduler{}
+}
+
+// 直接执行
+func (defaultScheduler *DefaultScheduler) Schedule(task Task) {
+	try(task)
+}
 
 var (
 	chDie   = make(chan struct{})

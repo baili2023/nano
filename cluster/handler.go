@@ -335,14 +335,14 @@ func (h *LocalHandler) findMembers(service string) []*clusterpb.MemberInfo {
 func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Message, noCopy bool) {
 	index := strings.LastIndex(msg.Route, ".")
 	if index < 0 {
-		log.Println(fmt.Sprintf("github.com/baili2023/nano/handler: invalid route %s", msg.Route))
+		log.Println(fmt.Sprintf("nano/handler: invalid route %s", msg.Route))
 		return
 	}
 
 	service := msg.Route[:index]
 	members := h.findMembers(service)
 	if len(members) == 0 {
-		log.Println(fmt.Sprintf("github.com/baili2023/nano/handler: %s not found(forgot registered?)", msg.Route))
+		log.Println(fmt.Sprintf("nano/handler: %s not found(forgot registered?)", msg.Route))
 		return
 	}
 
