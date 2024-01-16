@@ -355,16 +355,23 @@ func (n *Node) HandleNotify(_ context.Context, req *clusterpb.NotifyMessage) (*c
 	if !found {
 		return nil, fmt.Errorf("service not found in current node: %v", req.Route)
 	}
-	s, err := n.findOrCreateSession(req.SessionId, req.GateAddr)
-	if err != nil {
-		return nil, err
+
+	// 为多个会话编号生成会话对象
+	var sessions = make([]*session.Session, 0)
+	for i := 0; i < len(req.SessionIds); i++ {
+		s, err := n.findOrCreateSession(req.SessionIds[i], req.GateAddr)
+		if err != nil {
+			return nil, err
+		}
+		sessions = append(sessions, s)
 	}
+
 	msg := &message.Message{
 		Type:  message.Notify,
 		Route: req.Route,
 		Data:  req.Data,
 	}
-	n.handler.localProcess(handler, 0, s, msg)
+	n.handler.localProcess(handler, 0, sessions[0], msg, sessions...)
 	return &clusterpb.MemberHandleResponse{}, nil
 }
 

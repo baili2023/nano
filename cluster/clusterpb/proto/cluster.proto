@@ -46,8 +46,9 @@ message RequestMessage {
 message NotifyMessage {
     string gateAddr = 1;
     int64 sessionId = 2;
-    string route = 3;
-    bytes data = 4;
+    repeated int64 sessionIds = 3;
+    string route = 4;
+    bytes data = 5;
 }
 
 message ResponseMessage {

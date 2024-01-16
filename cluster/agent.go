@@ -137,7 +137,7 @@ func (a *agent) Push(route string, v interface{}) error {
 }
 
 // RPC, implementation for session.NetworkEntity interface
-func (a *agent) RPC(route string, v interface{}) error {
+func (a *agent) RPC(route string, v interface{}, sessionIds ...int64) error {
 	if a.status() == statusClosed {
 		return ErrBrokenPipe
 	}
@@ -152,7 +152,7 @@ func (a *agent) RPC(route string, v interface{}) error {
 		Route: route,
 		Data:  data,
 	}
-	a.rpcHandler(a.session, msg, true)
+	a.rpcHandler(a.session, msg, true, sessionIds...)
 	return nil
 }
 

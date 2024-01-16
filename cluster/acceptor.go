@@ -35,8 +35,9 @@ func (a *acceptor) Push(route string, v interface{}) error {
 	return err
 }
 
+// 需要传递多个会话编号时需要填充后续的会话编号
 // RPC implements the session.NetworkEntity interface
-func (a *acceptor) RPC(route string, v interface{}) error {
+func (a *acceptor) RPC(route string, v interface{}, sessionIds ...int64) error {
 	// TODO: buffer
 	data, err := message.Serialize(v)
 	if err != nil {
@@ -47,7 +48,7 @@ func (a *acceptor) RPC(route string, v interface{}) error {
 		Route: route,
 		Data:  data,
 	}
-	a.rpcHandler(a.session, msg, true)
+	a.rpcHandler(a.session, msg, true, sessionIds...)
 	return nil
 }
 

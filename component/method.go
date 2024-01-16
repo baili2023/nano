@@ -32,6 +32,8 @@ var (
 	typeOfError   = reflect.TypeOf((*error)(nil)).Elem()
 	typeOfBytes   = reflect.TypeOf(([]byte)(nil))
 	typeOfSession = reflect.TypeOf(session.New(nil))
+
+	TypeOfSessions = reflect.TypeOf(([]*session.Session)(nil))
 )
 
 func isExported(name string) bool {
@@ -57,7 +59,8 @@ func isHandlerMethod(method reflect.Method) bool {
 	}
 
 	// Method needs three ins: receiver, *Session, []byte or pointer.
-	if mt.NumIn() != 3 {
+
+	if num := mt.NumIn(); num != 3 {
 		return false
 	}
 
@@ -66,7 +69,8 @@ func isHandlerMethod(method reflect.Method) bool {
 		return false
 	}
 
-	if t1 := mt.In(1); t1.Kind() != reflect.Ptr || t1 != typeOfSession {
+	// 数组参数目前只支持服务端直接调用
+	if t1 := mt.In(1); t1 != TypeOfSessions && (t1.Kind() != reflect.Ptr || t1 != typeOfSession) {
 		return false
 	}
 

@@ -52,7 +52,7 @@ var (
 	kick []byte // kick packet data
 )
 
-type rpcHandler func(session *session.Session, msg *message.Message, noCopy bool)
+type rpcHandler func(session *session.Session, msg *message.Message, noCopy bool, sessionId ...int64)
 
 // CustomerRemoteServiceRoute customer remote service route
 type CustomerRemoteServiceRoute func(service string, session *session.Session, members []*clusterpb.MemberInfo) *clusterpb.MemberInfo
@@ -332,7 +332,7 @@ func (h *LocalHandler) findMembers(service string) []*clusterpb.MemberInfo {
 	return h.remoteServices[service]
 }
 
-func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Message, noCopy bool) {
+func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Message, noCopy bool, sessionIds ...int64) {
 	index := strings.LastIndex(msg.Route, ".")
 	if index < 0 {
 		log.Println(fmt.Sprintf("nano/handler: invalid route %s", msg.Route))
@@ -376,6 +376,7 @@ func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Mess
 		log.Println(err)
 		return
 	}
+
 	var data = msg.Data
 	if !noCopy && len(msg.Data) > 0 {
 		data = make([]byte, len(msg.Data))
@@ -404,10 +405,11 @@ func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Mess
 		_, err = client.HandleRequest(context.Background(), request)
 	case message.Notify:
 		request := &clusterpb.NotifyMessage{
-			GateAddr:  gateAddr,
-			SessionId: sessionId,
-			Route:     msg.Route,
-			Data:      data,
+			GateAddr:   gateAddr,
+			SessionId:  sessionId,
+			SessionIds: sessionIds,
+			Route:      msg.Route,
+			Data:       data,
 		}
 		_, err = client.HandleNotify(context.Background(), request)
 	}
@@ -432,7 +434,7 @@ func (h *LocalHandler) processMessage(agent *agent, msg *message.Message) {
 	if !found {
 		h.remoteProcess(agent.session, msg, false)
 	} else {
-		h.localProcess(handler, lastMid, agent.session, msg)
+		h.localProcess(handler, lastMid, agent.session, msg, nil)
 	}
 }
 
@@ -445,7 +447,7 @@ func (h *LocalHandler) handleWS(conn *websocket.Conn) {
 	go h.handle(c)
 }
 
-func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, session *session.Session, msg *message.Message) {
+func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, session *session.Session, msg *message.Message, sessions ...*session.Session) {
 	if pipe := h.pipeline; pipe != nil {
 		err := pipe.Inbound().Process(session, msg)
 		if err != nil {
@@ -472,6 +474,12 @@ func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, 
 	}
 
 	args := []reflect.Value{handler.Receiver, reflect.ValueOf(session), reflect.ValueOf(data)}
+
+	// 会话对象为切片长度不为0 并且第一个参数是切片则进行切片反射对象生成
+	if handler.Method.Type.In(1) == component.TypeOfSessions {
+		args = []reflect.Value{handler.Receiver, reflect.ValueOf(sessions), reflect.ValueOf(data)}
+	}
+
 	task := func() {
 		switch v := session.NetworkEntity().(type) {
 		case *agent:
