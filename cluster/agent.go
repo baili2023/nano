@@ -93,7 +93,6 @@ func newAgent(conn net.Conn, pipeline pipeline.Pipeline, rpcHandler rpcHandler) 
 	s := session.New(a)
 	a.session = s
 	a.srv = reflect.ValueOf(s)
-
 	return a
 }
 
@@ -189,6 +188,7 @@ func (a *agent) ResponseMid(mid uint64, v interface{}) error {
 	return a.send(pendingMessage{typ: message.Response, mid: mid, payload: v})
 }
 
+// 关闭 TCP  或者  Websocket 连接对象的时候 触发
 // Close, implementation for session.NetworkEntity interface
 // Close closes the agent, clean inner state and close low-level connection.
 // Any blocked Read or Write operations will be unblocked and return errors.
@@ -209,6 +209,7 @@ func (a *agent) Close() error {
 		// expect
 	default:
 		close(a.chDie)
+		// 调用 session.Lifetime.OnClose() 函数注册上去的关闭时需要执行的函数
 		scheduler.PushTask(func() { session.Lifetime.Close(a.session) })
 	}
 
@@ -306,7 +307,6 @@ func (a *agent) write() {
 				log.Println(err.Error())
 				break
 			}
-
 			// packet encode
 			p, err := codec.Encode(packet.Data, em)
 			if err != nil {
@@ -329,4 +329,9 @@ func (a *agent) Kick(v interface{}) error {
 		return ErrBrokenPipe
 	}
 	return a.send(pendingMessage{typ: message.Kick})
+}
+
+// 取出会话编号
+func (a *agent) ID() int64 {
+	return a.session.ID()
 }

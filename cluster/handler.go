@@ -332,7 +332,7 @@ func (h *LocalHandler) findMembers(service string) []*clusterpb.MemberInfo {
 	return h.remoteServices[service]
 }
 
-func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Message, noCopy bool, sessionIds ...int64) error {
+func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Message, noCopy bool, sids ...int64) error {
 	var err error
 	index := strings.LastIndex(msg.Route, ".")
 	if index < 0 {
@@ -411,7 +411,7 @@ func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Mess
 		request := &clusterpb.NotifyMessage{
 			GateAddr:   gateAddr,
 			SessionId:  sessionId,
-			SessionIds: sessionIds,
+			SessionIds: append(sids, sessionId),
 			Route:      msg.Route,
 			Data:       data,
 		}

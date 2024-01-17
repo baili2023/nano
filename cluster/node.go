@@ -331,34 +331,34 @@ func (n *Node) findOrCreateSession(sid int64, gateAddr string) (*session.Session
 	return s, nil
 }
 
-func (n *Node) findOrCreateSessionTrans(sid int64, gateAddr string, set bool) (*session.Session, error) {
-	n.mu.RLock()
-	s, found := n.sessions[sid]
-	n.mu.RUnlock()
-	if !found {
-		conns, err := n.rpcClient.getConnPool(gateAddr)
-		if err != nil {
-			return nil, err
-		}
-		ac := &acceptor{
-			sid:        sid,
-			gateClient: clusterpb.NewMemberClient(conns.Get()),
-			rpcHandler: n.handler.remoteProcess,
-			gateAddr:   gateAddr,
-		}
-		// 同步网关节点中的sessionId
-		if set {
-			s = session.NewById(ac, sid)
-		} else {
-			s = session.New(ac)
-		}
-		ac.session = s
-		n.mu.Lock()
-		n.sessions[sid] = s
-		n.mu.Unlock()
-	}
-	return s, nil
-}
+// func (n *Node) findOrCreateSessionTrans(sid int64, gateAddr string, set bool) (*session.Session, error) {
+// 	n.mu.RLock()
+// 	s, found := n.sessions[sid]
+// 	n.mu.RUnlock()
+// 	if !found {
+// 		conns, err := n.rpcClient.getConnPool(gateAddr)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		ac := &acceptor{
+// 			sid:        sid,
+// 			gateClient: clusterpb.NewMemberClient(conns.Get()),
+// 			rpcHandler: n.handler.remoteProcess,
+// 			gateAddr:   gateAddr,
+// 		}
+// 		// 同步网关节点中的sessionId
+// 		if set {
+// 			s = session.NewById(ac, sid)
+// 		} else {
+// 			s = session.New(ac)
+// 		}
+// 		ac.session = s
+// 		n.mu.Lock()
+// 		n.sessions[sid] = s
+// 		n.mu.Unlock()
+// 	}
+// 	return s, nil
+// }
 
 func (n *Node) HandleRequest(_ context.Context, req *clusterpb.RequestMessage) (*clusterpb.MemberHandleResponse, error) {
 	handler, found := n.handler.localHandlers[req.Route]
@@ -386,20 +386,15 @@ func (n *Node) HandleNotify(_ context.Context, req *clusterpb.NotifyMessage) (*c
 	}
 
 	// 是否需要使用旧的sessionId 设置为本地新建的会话对象sessionId
-	var set bool
 	if len(req.SessionIds) <= 0 {
 		req.SessionIds = make([]int64, 0)
 		req.SessionIds = append(req.SessionIds, req.SessionId)
-	} else {
-		// 当存在多个会话对象时 需要设置
-		set = true
 	}
 
 	// 为多个会话编号生成会话对象
 	var sessions = make([]*session.Session, 0)
 	for i := 0; i < len(req.SessionIds); i++ {
-		// s, err := n.findOrCreateSession(req.SessionIds[i], req.GateAddr)
-		s, err := n.findOrCreateSessionTrans(req.SessionIds[i], req.GateAddr, set)
+		s, err := n.findOrCreateSession(req.SessionIds[i], req.GateAddr)
 		if err != nil {
 			return nil, err
 		}

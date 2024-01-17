@@ -40,6 +40,7 @@ type NetworkEntity interface {
 	Close() error
 	Kick(v interface{}) error
 	RemoteAddr() net.Addr
+	ID() int64
 }
 
 var (

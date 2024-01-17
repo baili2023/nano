@@ -35,9 +35,10 @@ func (a *acceptor) Push(route string, v interface{}) error {
 	return err
 }
 
-// 需要传递多个会话编号时需要填充后续的会话编号
+// "fea:新增符合框架作者设计的传递多sessionId的方式在NetworkEntity下新增ID()函数"
+// 需要传递多个会话编号时需要填充后续的会话编号 sessionIds 是除去 当前会话对象的其余需要传递的会话对象sid
 // RPC implements the session.NetworkEntity interface
-func (a *acceptor) RPC(route string, v interface{}, sessionIds ...int64) error {
+func (a *acceptor) RPC(route string, v interface{}, sids ...int64) error {
 	// TODO: buffer
 	data, err := message.Serialize(v)
 	if err != nil {
@@ -48,7 +49,7 @@ func (a *acceptor) RPC(route string, v interface{}, sessionIds ...int64) error {
 		Route: route,
 		Data:  data,
 	}
-	return a.rpcHandler(a.session, msg, true, sessionIds...)
+	return a.rpcHandler(a.session, msg, true, sids...)
 }
 
 // LastMid implements the session.NetworkEntity interface
@@ -93,6 +94,9 @@ func (*acceptor) RemoteAddr() net.Addr {
 }
 
 func (a *acceptor) Kick(v interface{}) error {
-
 	return nil
+}
+
+func (a *acceptor) ID() int64 {
+	return a.sid
 }
