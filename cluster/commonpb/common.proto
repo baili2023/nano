@@ -1,0 +1,18 @@
+syntax = "proto3";
+package  common;
+//4种交互方式
+// request =>     客户端请求并提供callback 等待服务端响应response    client  to server
+// response <=   服务端响应指定的request 请求         server to client     一对一
+// notify ==>    客户端通知服务端 不需要服务端响应     client to server
+// push  <===     服务端主动向客户端推送         server to client      不需要client先发起 request  主动向客户端推送
+
+option go_package = "./commonpb";
+
+//import "google/protobuf/any.proto";
+
+// client <=== server
+//@comment("错误监听","10001","OnErr")
+message OnErr {
+  uint32 code=1;
+  string error=2;
+}
