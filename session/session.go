@@ -73,6 +73,16 @@ func New(entity NetworkEntity) *Session {
 	}
 }
 
+func NewById(entity NetworkEntity, id int64) *Session {
+	return &Session{
+		id:       id,
+		entity:   entity,
+		data:     make(map[string]interface{}),
+		lastTime: time.Now().Unix(),
+		router:   newRouter(),
+	}
+}
+
 // NetworkEntity returns the low-level network agent object
 func (s *Session) NetworkEntity() NetworkEntity {
 	return s.entity

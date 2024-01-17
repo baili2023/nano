@@ -141,7 +141,6 @@ func (a *agent) RPC(route string, v interface{}, sessionIds ...int64) error {
 	if a.status() == statusClosed {
 		return ErrBrokenPipe
 	}
-
 	// TODO: buffer
 	data, err := message.Serialize(v)
 	if err != nil {
@@ -152,8 +151,7 @@ func (a *agent) RPC(route string, v interface{}, sessionIds ...int64) error {
 		Route: route,
 		Data:  data,
 	}
-	a.rpcHandler(a.session, msg, true, sessionIds...)
-	return nil
+	return a.rpcHandler(a.session, msg, true, sessionIds...)
 }
 
 // Response, implementation for session.NetworkEntity interface

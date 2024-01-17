@@ -52,7 +52,7 @@ var (
 	kick []byte // kick packet data
 )
 
-type rpcHandler func(session *session.Session, msg *message.Message, noCopy bool, sessionId ...int64)
+type rpcHandler func(session *session.Session, msg *message.Message, noCopy bool, sessionId ...int64) error
 
 // CustomerRemoteServiceRoute customer remote service route
 type CustomerRemoteServiceRoute func(service string, session *session.Session, members []*clusterpb.MemberInfo) *clusterpb.MemberInfo
@@ -332,18 +332,21 @@ func (h *LocalHandler) findMembers(service string) []*clusterpb.MemberInfo {
 	return h.remoteServices[service]
 }
 
-func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Message, noCopy bool, sessionIds ...int64) {
+func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Message, noCopy bool, sessionIds ...int64) error {
+	var err error
 	index := strings.LastIndex(msg.Route, ".")
 	if index < 0 {
+		err = fmt.Errorf(fmt.Sprintf("nano/handler: invalid route %s", msg.Route))
 		log.Println(fmt.Sprintf("nano/handler: invalid route %s", msg.Route))
-		return
+		return err
 	}
 
 	service := msg.Route[:index]
 	members := h.findMembers(service)
 	if len(members) == 0 {
-		log.Println(fmt.Sprintf("nano/handler: %s not found(forgot registered?)", msg.Route))
-		return
+		err = fmt.Errorf(fmt.Sprintf("nano/handler: %s not found(forgot registered?)", msg.Route))
+		log.Println(err.Error())
+		return err
 	}
 
 	// Select a remote service address
@@ -357,8 +360,9 @@ func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Mess
 		} else {
 			member := h.currentNode.Options.RemoteServiceRoute(service, session, members)
 			if member == nil {
-				log.Println(fmt.Sprintf("customize remoteServiceRoute handler: %s is not found", msg.Route))
-				return
+				err = fmt.Errorf(fmt.Sprintf("customize remoteServiceRoute handler: %s is not found", msg.Route))
+				log.Println(err.Error())
+				return err
 			}
 			remoteAddr = member.ServiceAddr
 			session.Router().Bind(service, remoteAddr)
@@ -373,8 +377,8 @@ func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Mess
 	}
 	pool, err := h.currentNode.rpcClient.getConnPool(remoteAddr)
 	if err != nil {
-		log.Println(err)
-		return
+		log.Println(err.Error())
+		return err
 	}
 
 	var data = msg.Data
@@ -413,9 +417,11 @@ func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Mess
 		}
 		_, err = client.HandleNotify(context.Background(), request)
 	}
+
 	if err != nil {
 		log.Println(fmt.Sprintf("Process remote message (%d:%s) error: %+v", msg.ID, msg.Route, err))
 	}
+	return err
 }
 
 func (h *LocalHandler) processMessage(agent *agent, msg *message.Message) {
@@ -498,7 +504,7 @@ func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, 
 
 	index := strings.LastIndex(msg.Route, ".")
 	if index < 0 {
-		log.Println(fmt.Sprintf("github.com/baili2023/nano/handler: invalid route %s", msg.Route))
+		log.Println(fmt.Sprintf("nano/handler: invalid route %s", msg.Route))
 		return
 	}
 
@@ -509,13 +515,13 @@ func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, 
 		//取出会话对象中绑定的房间对象中消息队列 进行当前消息队列的操作
 		sched := session.Value(s.SchedName)
 		if sched == nil {
-			log.Println(fmt.Sprintf("nanl/handler: cannot found `schedular.LocalScheduler` by %s", s.SchedName))
+			log.Println(fmt.Sprintf("nano/handler: cannot found `schedular.LocalScheduler` by %s", s.SchedName))
 			return
 		}
 
 		local, ok := sched.(scheduler.LocalScheduler)
 		if !ok {
-			log.Println(fmt.Sprintf("nanl/handler: Type %T does not implement the `schedular.LocalScheduler` interface",
+			log.Println(fmt.Sprintf("nano/handler: Type %T does not implement the `schedular.LocalScheduler` interface",
 				sched))
 			return
 		}

@@ -48,8 +48,7 @@ func (a *acceptor) RPC(route string, v interface{}, sessionIds ...int64) error {
 		Route: route,
 		Data:  data,
 	}
-	a.rpcHandler(a.session, msg, true, sessionIds...)
-	return nil
+	return a.rpcHandler(a.session, msg, true, sessionIds...)
 }
 
 // LastMid implements the session.NetworkEntity interface

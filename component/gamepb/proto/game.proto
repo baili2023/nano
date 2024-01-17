@@ -7,25 +7,28 @@ package  game;
 // response <=   服务端响应指定的request 请求         server to client     一对一
 // notify ==>    客户端通知服务端 不需要服务端响应     client to server
 // push  <===     服务端主动向客户端推送         server to client   不需要client先发起 request  主动向客户端推送
-option go_package = "./gamepb";
+option go_package = "../gamepb;";
 
 
 message Begin {
- //房间号
+   //房间号
    int64 roomCode=1;
    // map 选择的规则 key  匹配key  uint32 具体的值   根据匹配的规则定 当匹配到 需要bool 的时候 则0 为false  1 为true
    map<string,uint32>  rules=2;
    // map 会话编号 玩家列表信息 key 为会话对象唯一标识
    map<int64,Player> players=3;
-//   当前轮数
-   uint32 RoundNum=4;
+  //   当前轮数
+   uint32 roundNum=4;
+   
+ // 场次总人数
+   uint32 peopleNum=5;
 }
 
 message  Player {
    //玩家座位位置
-   uint32   deskPos=1;
+   uint32 deskPos=1;
    //  玩家编号
-   uint64  uid=2;
+   int64  uid=2;
    //  玩家昵称
    string nickname=3;
    //  玩家是否准备

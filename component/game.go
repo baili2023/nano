@@ -7,7 +7,18 @@ import (
 
 type GameComponent interface {
 	Component
-	Begin([]*session.Session, *gamepb.Begin) error
+	// 开始游戏
+	RPCBegin([]*session.Session, *gamepb.Begin) error
+	// 断线重连
+	RPCReJoin(*session.Session) error
+	// 玩家挂后台
+	RPCPause(s *session.Session, _ []byte) error
+	// 玩家从后台切回来
+	RPCResume(s *session.Session, _ []byte) error
+	// 玩家在游戏内重新连接
+	// RPCReConnect(s *session.Session, _ []byte) error
+	// 玩家离线
+	// RPCDisconnect(s *session.Session, _ []byte) error
 }
 
 type GameBase struct{}
