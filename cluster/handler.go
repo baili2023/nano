@@ -517,9 +517,9 @@ func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, 
 		//取出会话对象中绑定的房间对象中消息队列 进行当前消息队列的操作
 		sched := session.Value(s.SchedName)
 		if sched == nil {
-			log.Println(fmt.Sprintf("nano/handler: cannot found `schedular.LocalScheduler` by %s", s.SchedName))
 			// 放置全局消息队列中进行执行
 			scheduler.PushTask(task)
+			log.Println(fmt.Sprintf("nano/handler: cannot found `schedular.LocalScheduler` by %s", s.SchedName))
 			return
 		}
 		local, ok := sched.(scheduler.LocalScheduler)

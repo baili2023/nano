@@ -34,3 +34,7 @@ func (c *GameBase) BeforeShutdown() {}
 
 // Shutdown was called to shutdown the component.
 func (c *GameBase) Shutdown() {}
+
+func (c *GameBase) SchedName() string {
+	return ""
+}

@@ -42,5 +42,5 @@ func (c *Base) Name() string {
 
 // SchedName
 func (c *Base) SchedName() string {
-	return c.Name()
+	return ""
 }

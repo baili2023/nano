@@ -24,6 +24,9 @@ func common() []nano.Option {
 		options = append(options, nano.WithIsWebsocket(enableWs))
 		options = append(options, nano.WithWSPath(viper.GetString("network.ws_path")))
 		options = append(options, nano.WithCheckOriginFunc(func(_ *http.Request) bool { return true }))
+	}
+
+	if clientAddr := viper.GetString("network.client_addr"); clientAddr != "" {
 		options = append(options, nano.WithClientAddr(viper.GetString("network.client_addr")))
 	}
 

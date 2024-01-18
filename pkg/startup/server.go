@@ -108,7 +108,7 @@ func Startup(components *component.Components, name string) {
 		options = option.NodeOptions(components)
 	}
 	fmt.Printf("\t\t\t\t\t\t\t\t\t %s SERVICE STARTUP\n", strings.ToUpper(name))
-	addr := fmt.Sprintf(":%d", viper.GetInt("network.port"))
+	addr := fmt.Sprintf("%s:%d", viper.GetString("network.host"), viper.GetInt("network.port"))
 	nano.Listen(addr,
 		options...,
 	)

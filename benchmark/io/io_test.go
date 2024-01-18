@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	addr = "192.168.1.63:13250" // local address
+	addr = "192.168.1.63:33251" // local address
 	conc = 1000                 // concurrent client count
 )
 
@@ -83,17 +83,25 @@ func client() {
 		panic(err)
 	}
 
-	c.On("pong", func(data interface{}) {})
+	c.On("HandleGameEvent", func(data interface{}) {})
 
 	<-chReady
 	for /*i := 0; i < 1; i++*/ {
-		c.Notify("TestHandler.Ping", &testdata.Ping{})
+
+		err := c.Request("Hall.Ready", nil, func(data interface{}) {
+			fmt.Println(string(data.([]byte)))
+			//onResult <- string(data.([]byte))
+			//chWait <- struct{}{}
+		})
+		if err != nil {
+			fmt.Println(err)
+		}
 		time.Sleep(1000 * time.Millisecond)
 	}
 }
 
 func TestIO(t *testing.T) {
-	go server()
+	//go server()
 
 	// wait server startup
 	time.Sleep(1 * time.Second)
