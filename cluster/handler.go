@@ -481,7 +481,7 @@ func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, 
 
 	args := []reflect.Value{handler.Receiver, reflect.ValueOf(session), reflect.ValueOf(data)}
 
-	// 第一个参数是切片则进行切片反射对象生成
+	//第一个参数是切片则进行切片反射对象生成
 	if handler.Method.Type.In(1) == component.TypeOfSessions {
 		args = []reflect.Value{handler.Receiver, reflect.ValueOf(sessions), reflect.ValueOf(data)}
 	}

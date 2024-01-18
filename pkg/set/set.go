@@ -7,6 +7,12 @@ type Set struct {
 	m  map[string]struct{}
 }
 
+func New() *Set {
+	return &Set{
+		m: make(map[string]struct{}),
+	}
+}
+
 func (s *Set) Contains(val string) bool {
 	if val == "" {
 		return true
@@ -30,10 +36,4 @@ func (s *Set) Remove(val string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	delete(s.m, val)
-}
-
-func New() *Set {
-	return &Set{
-		m: make(map[string]struct{}),
-	}
 }
