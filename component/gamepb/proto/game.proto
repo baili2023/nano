@@ -3,6 +3,9 @@ package  game;
 
 //4种交互方式
 
+
+
+
 // request =>     客户端请求并提供callback 等待服务端响应response    client  to server
 // response <=   服务端响应指定的request 请求         server to client     一对一
 // notify ==>    客户端通知服务端 不需要服务端响应     client to server
