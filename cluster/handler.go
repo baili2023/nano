@@ -510,12 +510,16 @@ func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, 
 
 	// A message can be dispatch to global thread or a user customized thread
 	service := msg.Route[:index]
-	//获取指定的本地service  找到并且有为当前service设置过消息队列协程常量
+
+	//获取指定的本地service  找到并且有为当前service设置过SchedName的
+	// TODO 需要再判断一下
 	if s, found := h.localServices[service]; found && s.SchedName != "" {
 		//取出会话对象中绑定的房间对象中消息队列 进行当前消息队列的操作
 		sched := session.Value(s.SchedName)
 		if sched == nil {
 			log.Println(fmt.Sprintf("nano/handler: cannot found `schedular.LocalScheduler` by %s", s.SchedName))
+			// 放置全局消息队列中进行执行
+			scheduler.PushTask(task)
 			return
 		}
 

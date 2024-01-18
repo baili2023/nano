@@ -35,7 +35,6 @@ const (
 	sessionCloseBacklog = 1 << 8
 )
 
-// 不能用于建立连接后请求的第一个路由
 // LocalScheduler schedules task to a customized goroutine
 type LocalScheduler interface {
 	Schedule(Task)
@@ -45,23 +44,23 @@ type Task func()
 
 type Hook func()
 
-type DefaultQueueScheduler struct {
+type QueueLocalScheduler struct {
 	chTasks chan Task
 }
 
-func NewDefaultQueueScheduler() *DefaultQueueScheduler {
-	dh := &DefaultQueueScheduler{chTasks: make(chan Task, 1<<8)}
+func NewQueueLocalScheduler() *QueueLocalScheduler {
+	dh := &QueueLocalScheduler{chTasks: make(chan Task, 1<<8)}
 	go dh.Sched()
 	return dh
 }
 
 // 自定义消息队列中发送消息
-func (localScheduler *DefaultQueueScheduler) Schedule(task Task) {
+func (localScheduler *QueueLocalScheduler) Schedule(task Task) {
 	localScheduler.chTasks <- task
 }
 
 // 去消费队列里面的消息
-func (localScheduler *DefaultQueueScheduler) Sched() {
+func (localScheduler *QueueLocalScheduler) Sched() {
 	defer func() {
 		close(localScheduler.chTasks)
 	}()

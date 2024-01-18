@@ -7,4 +7,6 @@ const (
 	CUR_PLAYER SessionKey = "player"
 	// 当前牌桌
 	CUR_DESK SessionKey = "desk"
+	// 本地调度
+	LOCAL_SCHEDULER SessionKey = "localScheduler"
 )
