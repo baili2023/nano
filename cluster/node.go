@@ -442,6 +442,7 @@ func (n *Node) DelMember(_ context.Context, req *clusterpb.DelMemberRequest) (*c
 // SessionClosed implements the MemberServer interface
 func (n *Node) SessionClosed(_ context.Context, req *clusterpb.SessionClosedRequest) (*clusterpb.SessionClosedResponse, error) {
 	n.mu.Lock()
+	// 当网关中连接对象断开连接后 进行其它节点中的会话对象移除
 	s, found := n.sessions[req.SessionId]
 	delete(n.sessions, req.SessionId)
 	n.mu.Unlock()

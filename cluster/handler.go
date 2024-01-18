@@ -481,7 +481,7 @@ func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, 
 
 	args := []reflect.Value{handler.Receiver, reflect.ValueOf(session), reflect.ValueOf(data)}
 
-	// 会话对象为切片长度不为0 并且第一个参数是切片则进行切片反射对象生成
+	// 第一个参数是切片则进行切片反射对象生成
 	if handler.Method.Type.In(1) == component.TypeOfSessions {
 		args = []reflect.Value{handler.Receiver, reflect.ValueOf(sessions), reflect.ValueOf(data)}
 	}
@@ -522,7 +522,6 @@ func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, 
 			scheduler.PushTask(task)
 			return
 		}
-
 		local, ok := sched.(scheduler.LocalScheduler)
 		if !ok {
 			log.Println(fmt.Sprintf("nano/handler: Type %T does not implement the `schedular.LocalScheduler` interface",

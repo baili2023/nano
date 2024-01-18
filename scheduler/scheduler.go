@@ -44,22 +44,25 @@ type Task func()
 
 type Hook func()
 
+// 按会话进行绑定
 type QueueLocalScheduler struct {
 	chTasks chan Task
 }
 
+// QueueLocalScheduler
 func NewQueueLocalScheduler() *QueueLocalScheduler {
-	dh := &QueueLocalScheduler{chTasks: make(chan Task, 1<<8)}
-	go dh.Sched()
-	return dh
+	qs := &QueueLocalScheduler{chTasks: make(chan Task, 1<<8)}
+	//消费消息队列
+	go qs.Sched()
+	return qs
 }
 
-// 自定义消息队列中发送消息
+// Schedule 读协程往自定义消息队列写入任务
 func (localScheduler *QueueLocalScheduler) Schedule(task Task) {
 	localScheduler.chTasks <- task
 }
 
-// 去消费队列里面的消息
+// Sched 消息自定义协程任务
 func (localScheduler *QueueLocalScheduler) Sched() {
 	defer func() {
 		close(localScheduler.chTasks)
@@ -74,14 +77,16 @@ func (localScheduler *QueueLocalScheduler) Sched() {
 	}
 }
 
-// 无消息队列的任务处理
+// DefaultScheduler 无消息队列的任务处理
+//
+//	每个读线程 会同时进行访问 存在并发问题
 type DefaultScheduler struct{}
 
 func NewDefaultScheduler() *DefaultScheduler {
 	return &DefaultScheduler{}
 }
 
-// 直接执行
+// Schedule 每个读线程直接执行
 func (defaultScheduler *DefaultScheduler) Schedule(task Task) {
 	try(task)
 }
