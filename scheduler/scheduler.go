@@ -123,10 +123,8 @@ func Sched() {
 		select {
 		case <-ticker.C:
 			cron()
-
 		case f := <-chTasks:
 			try(f)
-
 		case <-chDie:
 			return
 		}

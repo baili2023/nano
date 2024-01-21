@@ -11,4 +11,10 @@ const (
 	CUR_DESK SessionKey = "desk"
 	// 本地调度
 	LOCAL_SCHEDULER SessionKey = "localScheduler"
+	// 当前所在牌桌号
+	CUR_DESKNO SessionKey = "desk_no"
+	// 当前房间
+	CUR_ROOM SessionKey = "room"
+	// 当前房间号
+	CUR_ROOMNO SessionKey = "room_no"
 )

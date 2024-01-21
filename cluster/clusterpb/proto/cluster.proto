@@ -46,10 +46,12 @@ message RequestMessage {
 message NotifyMessage {
     string gateAddr = 1;
     int64 sessionId = 2;
-    repeated int64 sessionIds = 3;
+    map<int64,string> sessions = 3;
     string route = 4;
     bytes data = 5;
 }
+
+
 
 message ResponseMessage {
     int64 sessionId = 1;

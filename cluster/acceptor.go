@@ -7,6 +7,7 @@ import (
 	"github.com/baili2023/nano/cluster/clusterpb"
 	"github.com/baili2023/nano/internal/message"
 	"github.com/baili2023/nano/mock"
+	"github.com/baili2023/nano/pkg"
 	"github.com/baili2023/nano/session"
 )
 
@@ -37,7 +38,7 @@ func (a *acceptor) Push(route string, v interface{}) error {
 
 // 需要传递多个会话编号时需要填充后续的会话编号 sessionIds 是除去 当前会话对象的其余需要传递的会话对象sid
 // RPC implements the session.NetworkEntity interface
-func (a *acceptor) RPC(route string, v interface{}, sids ...int64) error {
+func (a *acceptor) RPC(route string, v interface{}, sds ...pkg.SessionData) error {
 	// TODO: buffer
 	data, err := message.Serialize(v)
 	if err != nil {
@@ -48,7 +49,7 @@ func (a *acceptor) RPC(route string, v interface{}, sids ...int64) error {
 		Route: route,
 		Data:  data,
 	}
-	return a.rpcHandler(a.session, msg, true, sids...)
+	return a.rpcHandler(a.session, msg, true, sds...)
 }
 
 // LastMid implements the session.NetworkEntity interface
@@ -98,4 +99,8 @@ func (a *acceptor) Kick(v interface{}) error {
 
 func (a *acceptor) ID() int64 {
 	return a.sid
+}
+
+func (a *acceptor) RpcClientAddr() string {
+	return a.gateAddr
 }

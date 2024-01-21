@@ -40,6 +40,7 @@ import (
 	"github.com/baili2023/nano/internal/message"
 	"github.com/baili2023/nano/internal/packet"
 	"github.com/baili2023/nano/pipeline"
+	"github.com/baili2023/nano/pkg"
 	"github.com/baili2023/nano/scheduler"
 	"github.com/baili2023/nano/session"
 	"github.com/gorilla/websocket"
@@ -52,7 +53,7 @@ var (
 	kick []byte // kick packet data
 )
 
-type rpcHandler func(session *session.Session, msg *message.Message, noCopy bool, sessionId ...int64) error
+type rpcHandler func(session *session.Session, msg *message.Message, noCopy bool, sds ...pkg.SessionData) error
 
 // CustomerRemoteServiceRoute customer remote service route
 type CustomerRemoteServiceRoute func(service string, session *session.Session, members []*clusterpb.MemberInfo) *clusterpb.MemberInfo
@@ -332,7 +333,7 @@ func (h *LocalHandler) findMembers(service string) []*clusterpb.MemberInfo {
 	return h.remoteServices[service]
 }
 
-func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Message, noCopy bool, sids ...int64) error {
+func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Message, noCopy bool, sds ...pkg.SessionData) error {
 	var err error
 	index := strings.LastIndex(msg.Route, ".")
 	if index < 0 {
@@ -408,12 +409,16 @@ func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Mess
 		}
 		_, err = client.HandleRequest(context.Background(), request)
 	case message.Notify:
+		// TODO 部署多网关的时候  传递多会话对象的同时 也需要传递多网关地址  因为玩家可能从不同的网关进来的 网关地址应该是不一样的
 		request := &clusterpb.NotifyMessage{
-			GateAddr:   gateAddr,
-			SessionId:  sessionId,
-			SessionIds: append(sids, sessionId),
-			Route:      msg.Route,
-			Data:       data,
+			GateAddr:  gateAddr,
+			SessionId: sessionId,
+			Sessions:  make(map[int64]string),
+			Route:     msg.Route,
+			Data:      data,
+		}
+		for i := 0; i < len(sds); i++ {
+			request.Sessions[sds[i].SessionId] = sds[i].Addr
 		}
 		_, err = client.HandleNotify(context.Background(), request)
 	}
