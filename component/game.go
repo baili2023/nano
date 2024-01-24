@@ -8,7 +8,7 @@ import (
 const (
 	// Game Call Hall module
 	//ROUND_OVER  牌局结束  example: Hall.RoundOver    s.RPC(ROUND_OVER,&gamepb.RoundOver{})   每一轮 游戏结束请求大厅做结算和清除动作
-	ROUND_OVER = "RoundOver"
+	RPCROUND_OVER = "RPCRoundOver"
 
 	//TODO 钱包服务(该服务暂时还没有提供)  负责结算  下注操作 后续可以进行一次发送一个整的牌局结算信息
 	// s.RPC(RPCSettle,&gamepb.Settle{})
