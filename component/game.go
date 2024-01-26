@@ -8,14 +8,14 @@ import (
 const (
 	// Game Call Hall module
 	//ROUND_OVER  牌局结束  example: Hall.RoundOver    s.RPC(ROUND_OVER,&gamepb.RoundOver{})   每一轮 游戏结束请求大厅做结算和清除动作
-	RPCROUND_OVER = "RPCRoundOver"
+	RPCROUND_OVER = "Hall.RPCRoundOver"
 
 	//TODO 钱包服务(该服务暂时还没有提供)  负责结算  下注操作 后续可以进行一次发送一个整的牌局结算信息
 	// s.RPC(RPCSettle,&gamepb.Settle{})
 
 	//每一轮结算  目前是单个玩家请求一次
 	// s.RPC(RPCSettle,&gamepb.PlayerSettle{})
-	SETTLE = "RPCSettle"
+	RPCSETTLE = "Hall.RPCSettle"
 	// Hall  Call  Game module
 	//RPC_BEGIN  开始游戏  example: Xxx.RPCBegin   Xxx 对应子游戏路由前缀
 	RPC_BEGIN = "RPCBegin"
