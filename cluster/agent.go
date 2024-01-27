@@ -239,6 +239,7 @@ func (a *agent) setStatus(state int32) {
 func (a *agent) write() {
 	ticker := time.NewTicker(env.Heartbeat)
 	chWrite := make(chan []byte, agentWriteBacklog)
+	var isKick bool
 	// clean func
 	defer func() {
 		ticker.Stop()
@@ -259,14 +260,16 @@ func (a *agent) write() {
 				return
 			}
 			chWrite <- hbd
-
 		case data := <-chWrite:
 			// close agent while low-level conn broken
 			if _, err := a.conn.Write(data); err != nil {
 				log.Println(err.Error())
 				return
 			}
-
+			// 是kick 消息
+			if isKick {
+				return
+			}
 		case data := <-a.chSend:
 			payload, err := message.Serialize(data.payload)
 			if err != nil {
@@ -284,6 +287,7 @@ func (a *agent) write() {
 			}
 
 			if data.typ == message.Kick {
+				isKick = true
 				chWrite <- kick
 				break
 			}

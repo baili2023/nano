@@ -43,7 +43,7 @@ type GameComponent interface {
 	RPCBegin([]*session.Session, *gamepb.Begin) error
 	// 重新登陆断线重连 牌桌信息 总共三部分数据  1. 房间基本信息   2.玩家列表 基本信息 位置 数据   3. 牌桌数据(牌桌状态 玩家牌组)
 	RPCReJoin(*session.Session, *gamepb.ReJoin) error
-	// 玩家中途进入 需要同步牌桌数据  3. 牌桌数据
+	// 玩家中途进入 需要同步牌桌数据  3. 牌桌数据 将玩家放入到观看列表中
 	RPCEnter(*session.Session, []byte) error
 	// 房间玩家找位置坐下  给当前玩家在牌桌分配一个位置
 	RPCSitDown(*session.Session, []byte) error
