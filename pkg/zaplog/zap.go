@@ -7,6 +7,35 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// New
+// config.toml
+// [zap]
+// #prod 或者 dev
+// model="prod"
+// #日志文件存放文件夹
+// log_dir="logs"
+// #日志跟踪key
+// stacktrace_key="gate"
+// #1.capital 2.capitalColor  3.color
+// encode_level="capital"
+// # 1.console  输出到控制台   2.空值 为输出到日志文件
+// out=""
+// # 1. json  2.console
+// format="json"
+//
+//	[rotate]
+//
+// # 文件切割时间间隔
+//
+//	rotation_time="1h"
+//
+// # 文件最大存放时长
+//
+//	max_age="1d"
+//
+// # 文件大小 m
+//
+//	rotation_size=3
 func New() *zap.Logger {
 	levels := viper.GetStringSlice("zap.levels")
 	if len(levels) == 0 {
