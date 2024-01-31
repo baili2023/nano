@@ -479,13 +479,10 @@ func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, 
 			return
 		}
 	}
-
 	if env.Debug {
 		log.Println(fmt.Sprintf("UID=%d, Message={%s}, Data=%+v", session.UID(), msg.String(), data))
 	}
-
 	args := []reflect.Value{handler.Receiver, reflect.ValueOf(session), reflect.ValueOf(data)}
-
 	//第一个参数是切片则进行切片反射对象生成
 	if handler.Method.Type.In(1) == component.TypeOfSessions {
 		args = []reflect.Value{handler.Receiver, reflect.ValueOf(sessions), reflect.ValueOf(data)}
@@ -498,7 +495,6 @@ func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, 
 		case *acceptor:
 			v.lastMid = lastMid
 		}
-
 		result := handler.Method.Func.Call(args)
 		if len(result) > 0 {
 			if err := result[0].Interface(); err != nil {
@@ -506,16 +502,13 @@ func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, 
 			}
 		}
 	}
-
 	index := strings.LastIndex(msg.Route, ".")
 	if index < 0 {
 		log.Println(fmt.Sprintf("nano/handler: invalid route %s", msg.Route))
 		return
 	}
-
 	// A message can be dispatch to global thread or a user customized thread
 	service := msg.Route[:index]
-
 	//获取指定的本地service  找到并且有为当前service设置过SchedName的
 	// TODO 需要再判断一下
 	if s, found := h.localServices[service]; found && s.SchedName != "" {
