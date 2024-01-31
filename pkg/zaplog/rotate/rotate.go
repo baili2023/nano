@@ -56,7 +56,8 @@ func WriteSyncers(logDir string, rotationTime, maxAge time.Duration, rotationSiz
 		if err != nil {
 			panic(err)
 		}
-		rotate, err := rotatelogs.New(fmt.Sprintf("%s/%s", logDir, levels[i])+"%Y%m%d%H%M.log", rotatelogs.WithLinkName(fmt.Sprintf("%s.log", levels[i])), rotatelogs.WithMaxAge(maxAge), rotatelogs.WithRotationTime(rotationTime), rotatelogs.WithRotationSize(rotationSize))
+		logPrefix := fmt.Sprintf("%s/%s", logDir, levels[i])
+		rotate, err := rotatelogs.New(logPrefix+"%Y%m%d%H%M.log", rotatelogs.WithLinkName(logPrefix+".log"), rotatelogs.WithMaxAge(maxAge), rotatelogs.WithRotationTime(rotationTime), rotatelogs.WithRotationSize(rotationSize))
 		if err != nil {
 			panic(err)
 		}
