@@ -3,6 +3,7 @@ package rotate
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
@@ -44,7 +45,9 @@ func WriteSyncers(logDir string, rotationTime, maxAge time.Duration, rotationSiz
 	}
 
 	if logDir == "" {
-		logDir = "./"
+		logDir = "."
+	} else {
+		logDir = strings.TrimRight(logDir, "/")
 	}
 
 	writes := make(map[zapcore.Level]zapcore.WriteSyncer)

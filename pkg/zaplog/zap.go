@@ -54,6 +54,7 @@ func New() *zap.Logger {
 		}
 	}
 	zLog := zap.New(zapcore.NewTee(cores...), zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
+
 	return zLog
 }
 
