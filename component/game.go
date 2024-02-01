@@ -21,16 +21,21 @@ const (
 	RPC_BEGIN = "RPCBegin"
 	//RPC_REJOIN 登陆重新断线重连 example: Xxx.RPCReJoin
 	RPC_REJOIN = "RPCReJoin"
-	//RPC_Enter 玩家中途进入游戏
+
+	// Deprecated  由于需求中不要观看玩家该函数为过期函数 RPC_Enter 玩家中途进入游戏 只需要将玩家加入到 group 会话分组里面
 	RPC_Enter = "RPCEnter"
-	// 玩家坐下
+	// Deprecated  由于需求中不要观看玩家该函数为过期函数
+	RPC_WATCH_LEAVE = "RPCWatchLeave"
+	// Deprecated  由于需求中不要观看玩家该函数为过期函数 玩家坐下   需要将玩家添加到牌桌玩家列表上面
 	RPC_SITDOWN = "RPCSitdown"
+
 	//RPC_RECONNECT   预留  重新连接 example: Xxx.RPC_RECONNECT
 	RPC_RECONNECT = "RPCReConnect"
 	//RPC_DISSOLVE 正常解散
 	RPC_DISSOLVE = "RPCDissolve"
 	//RPC_FORCE_DISSOLVE 强制解散
 	RPC_FORCE_DISSOLVE = "RPCForceDissolve"
+
 	// //RPC_PAUSE	玩家挂后台
 	// RPC_PAUSE = "RPCPause"
 	// //RPC_Resume 玩家切后台回来
@@ -43,10 +48,7 @@ type GameComponent interface {
 	RPCBegin([]*session.Session, *gamepb.Begin) error
 	// 重新登陆断线重连 牌桌信息 总共三部分数据  1. 房间基本信息   2.玩家列表 基本信息 位置 数据   3. 牌桌数据(牌桌状态 玩家牌组)
 	RPCReJoin(*session.Session, *gamepb.ReJoin) error
-	// 玩家中途进入 需要同步牌桌数据  3. 牌桌数据 将玩家放入到观看列表中
-	RPCEnter(*session.Session, []byte) error
-	// 房间玩家找位置坐下  给当前玩家在牌桌分配一个位置
-	RPCSitDown(*session.Session, []byte) error
+
 	//游戏场景内重新连接    房间号 牌桌号 玩家编号
 	RPCReConnect(*session.Session, *gamepb.ReConnect) error
 	// 玩家挂后台     房间号 牌桌号 玩家编号
@@ -57,6 +59,13 @@ type GameComponent interface {
 	RPCDissolve(*session.Session, *gamepb.Dissolve) error
 	// 强制解散   房间号 牌桌号
 	RPCForceDissolve(*session.Session, *gamepb.ForceDissolve) error
+
+	// Deprecated  由于需求中不要观看玩家该函数为过期函数   玩家中途进入 需要同步牌桌数据  3. 牌桌数据 将玩家放入到观看列表中
+	RPCEnter(*session.Session, []byte) error
+	// Deprecated 由于需求中不要观看玩家该函数为过期函数 观看玩家离开 需求不需要观看玩家
+	RPCWatchLeave(*session.Session, []byte) error
+	// Deprecated 由于需求中不要观看玩家该函数为过期函数 房间玩家找位置坐下  给当前玩家在牌桌分配一个位置 需求不需要观看玩家
+	RPCSitDown(*session.Session, []byte) error
 }
 
 type GameBase struct{}
