@@ -34,6 +34,7 @@ import (
 	"github.com/baili2023/nano/internal/message"
 	"github.com/baili2023/nano/internal/packet"
 	"github.com/baili2023/nano/pipeline"
+	"github.com/baili2023/nano/pkg"
 	"github.com/baili2023/nano/scheduler"
 	"github.com/baili2023/nano/session"
 )
@@ -136,7 +137,7 @@ func (a *agent) Push(route string, v interface{}) error {
 }
 
 // RPC, implementation for session.NetworkEntity interface
-func (a *agent) RPC(route string, v interface{}, sessionIds ...int64) error {
+func (a *agent) RPC(route string, v interface{}, sds ...pkg.SessionData) error {
 	if a.status() == statusClosed {
 		return ErrBrokenPipe
 	}
@@ -150,7 +151,7 @@ func (a *agent) RPC(route string, v interface{}, sessionIds ...int64) error {
 		Route: route,
 		Data:  data,
 	}
-	return a.rpcHandler(a.session, msg, true, sessionIds...)
+	return a.rpcHandler(a.session, msg, true, sds...)
 }
 
 // Response, implementation for session.NetworkEntity interface
@@ -238,6 +239,7 @@ func (a *agent) setStatus(state int32) {
 func (a *agent) write() {
 	ticker := time.NewTicker(env.Heartbeat)
 	chWrite := make(chan []byte, agentWriteBacklog)
+	var isKick bool
 	// clean func
 	defer func() {
 		ticker.Stop()
@@ -258,14 +260,16 @@ func (a *agent) write() {
 				return
 			}
 			chWrite <- hbd
-
 		case data := <-chWrite:
 			// close agent while low-level conn broken
 			if _, err := a.conn.Write(data); err != nil {
 				log.Println(err.Error())
 				return
 			}
-
+			// 是kick 消息
+			if isKick {
+				return
+			}
 		case data := <-a.chSend:
 			payload, err := message.Serialize(data.payload)
 			if err != nil {
@@ -283,6 +287,7 @@ func (a *agent) write() {
 			}
 
 			if data.typ == message.Kick {
+				isKick = true
 				chWrite <- kick
 				break
 			}
@@ -334,4 +339,9 @@ func (a *agent) Kick(v interface{}) error {
 // 取出会话编号
 func (a *agent) ID() int64 {
 	return a.session.ID()
+}
+
+// 获取rpcClient 地址
+func (a *agent) RpcClientAddr() string {
+	return ""
 }

@@ -386,21 +386,20 @@ func (n *Node) HandleNotify(_ context.Context, req *clusterpb.NotifyMessage) (*c
 	}
 
 	// 是否需要使用旧的sessionId 设置为本地新建的会话对象sessionId
-	if len(req.SessionIds) <= 0 {
-		req.SessionIds = make([]int64, 0)
-		req.SessionIds = append(req.SessionIds, req.SessionId)
+	if len(req.Sessions) <= 0 {
+		req.Sessions = make(map[int64]string, 0)
+		req.Sessions[req.SessionId] = req.GateAddr
 	}
 
 	// 为多个会话编号生成会话对象
 	var sessions = make([]*session.Session, 0)
-	for i := 0; i < len(req.SessionIds); i++ {
-		s, err := n.findOrCreateSession(req.SessionIds[i], req.GateAddr)
+	for k, v := range req.Sessions {
+		s, err := n.findOrCreateSession(k, v)
 		if err != nil {
 			return nil, err
 		}
 		sessions = append(sessions, s)
 	}
-
 	msg := &message.Message{
 		Type:  message.Notify,
 		Route: req.Route,

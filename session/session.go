@@ -27,13 +27,14 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/baili2023/nano/pkg"
 	"github.com/baili2023/nano/service"
 )
 
 // NetworkEntity represent low-level network instance
 type NetworkEntity interface {
 	Push(route string, v interface{}) error
-	RPC(route string, v interface{}, sessionIds ...int64) error
+	RPC(route string, v interface{}, sds ...pkg.SessionData) error
 	LastMid() uint64
 	Response(v interface{}) error
 	ResponseMid(mid uint64, v interface{}) error
@@ -41,6 +42,8 @@ type NetworkEntity interface {
 	Kick(v interface{}) error
 	RemoteAddr() net.Addr
 	ID() int64
+
+	RpcClientAddr() string
 }
 
 var (
@@ -95,8 +98,8 @@ func (s *Session) Router() *Router {
 }
 
 // RPC sends message to remote server
-func (s *Session) RPC(route string, v interface{}, sessionIds ...int64) error {
-	return s.entity.RPC(route, v, sessionIds...)
+func (s *Session) RPC(route string, v interface{}, sds ...pkg.SessionData) error {
+	return s.entity.RPC(route, v, sds...)
 }
 
 // Push message to client

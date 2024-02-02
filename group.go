@@ -28,6 +28,7 @@ import (
 	"github.com/baili2023/nano/internal/env"
 	"github.com/baili2023/nano/internal/log"
 	"github.com/baili2023/nano/internal/message"
+	"github.com/baili2023/nano/pkg"
 	"github.com/baili2023/nano/session"
 )
 
@@ -226,5 +227,23 @@ func (c *Group) Close() error {
 
 	// release all reference
 	c.sessions = make(map[int64]*session.Session)
+	return nil
+}
+
+func (c *Group) ForEachAcceptor(sds *[]pkg.SessionData) error {
+	if sds == nil {
+		return fmt.Errorf("sds slice is nil")
+	}
+	if c.isClosed() {
+		return ErrCloseClosedGroup
+	}
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	for _, s := range c.sessions {
+		if s.NetworkEntity().RpcClientAddr() == "" {
+			return fmt.Errorf(" rpc client addr is empty string")
+		}
+		*sds = append(*sds, pkg.SessionData{SessionId: s.NetworkEntity().ID(), Addr: s.NetworkEntity().RpcClientAddr()})
+	}
 	return nil
 }
