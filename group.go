@@ -28,7 +28,6 @@ import (
 	"github.com/baili2023/nano/internal/env"
 	"github.com/baili2023/nano/internal/log"
 	"github.com/baili2023/nano/internal/message"
-	"github.com/baili2023/nano/pkg"
 	"github.com/baili2023/nano/session"
 )
 
@@ -189,6 +188,25 @@ func (c *Group) Leave(s *session.Session) error {
 	return nil
 }
 
+func (c *Group) Kick(check func(s *session.Session) bool) error {
+	if c.isClosed() {
+		return ErrClosedGroup
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	for _, s := range c.sessions {
+		if check(s) {
+			err := s.Kick(nil)
+			if err != nil {
+				return err
+			}
+			delete(c.sessions, s.ID())
+		}
+
+	}
+	return nil
+}
+
 // LeaveAll clear all sessions in the group
 func (c *Group) LeaveAll() error {
 	if c.isClosed() {
@@ -227,23 +245,5 @@ func (c *Group) Close() error {
 
 	// release all reference
 	c.sessions = make(map[int64]*session.Session)
-	return nil
-}
-
-func (c *Group) ForEachAcceptor(sds *[]pkg.SessionData) error {
-	if sds == nil {
-		return fmt.Errorf("sds slice is nil")
-	}
-	if c.isClosed() {
-		return ErrCloseClosedGroup
-	}
-	c.mu.RLock()
-	defer c.mu.RUnlock()
-	for _, s := range c.sessions {
-		if s.NetworkEntity().RpcClientAddr() == "" {
-			return fmt.Errorf(" rpc client addr is empty string")
-		}
-		*sds = append(*sds, pkg.SessionData{SessionId: s.NetworkEntity().ID(), Addr: s.NetworkEntity().RpcClientAddr()})
-	}
 	return nil
 }

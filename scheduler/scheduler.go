@@ -69,7 +69,7 @@ func (localScheduler *QueueLocalScheduler) Sched() {
 	}()
 	for {
 		select {
-		case f := <-chTasks:
+		case f := <-localScheduler.chTasks:
 			try(f)
 		case <-chDie:
 			return
@@ -142,4 +142,5 @@ func Close() {
 
 func PushTask(task Task) {
 	chTasks <- task
+	// log.Println("push task success")
 }

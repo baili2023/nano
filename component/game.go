@@ -59,7 +59,6 @@ type GameComponent interface {
 	RPCDissolve(*session.Session, *gamepb.Dissolve) error
 	// 强制解散   房间号 牌桌号
 	RPCForceDissolve(*session.Session, *gamepb.ForceDissolve) error
-
 	// Deprecated  由于需求中不要观看玩家该函数为过期函数   玩家中途进入 需要同步牌桌数据  3. 牌桌数据 将玩家放入到观看列表中
 	RPCEnter(*session.Session, []byte) error
 	// Deprecated 由于需求中不要观看玩家该函数为过期函数 观看玩家离开 需求不需要观看玩家

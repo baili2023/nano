@@ -319,7 +319,7 @@ type PlayerSettleInfo struct {
 	Uid uint64 `protobuf:"varint,1,opt,name=uid,proto3" json:"uid,omitempty"`
 	// false 减  true  加操作
 	Action bool `protobuf:"varint,2,opt,name=action,proto3" json:"action,omitempty"`
-	// 玩家输赢分数 正整数   根据 action 进行加减操作
+	// 玩家输赢分数 正数   根据 action 进行加减操作
 	Score float64 `protobuf:"fixed64,3,opt,name=score,proto3" json:"score,omitempty"`
 }
 
