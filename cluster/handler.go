@@ -158,7 +158,8 @@ func (h *LocalHandler) addRemoteService(member *clusterpb.MemberInfo) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	for _, s := range member.Services {
-		log.Println("Register remote service %s  member %s ", s, member.String())
+		log.Println("Register remote service ", s)
+		log.Println("member", member.String())
 		for i := 0; i < len(h.remoteServices[s]); i++ {
 			// 当前存在相同服务地址的成员时 进行服务地址成员替换 更新成员的服务
 			if h.remoteServices[s][i].GetServiceAddr() == member.ServiceAddr {
@@ -183,7 +184,7 @@ func (h *LocalHandler) delMember(addr string) {
 				} else {
 					members = append(members[:i], members[i+1:]...)
 				}
-				log.Println("delMember member: %s ", members[i].String())
+				log.Println("delMember member  ", members[i].String())
 			}
 		}
 		if len(members) == 0 {
