@@ -75,6 +75,7 @@ func (a *connPool) init(addr string) error {
 
 func (a *connPool) Get() *grpc.ClientConn {
 	next := atomic.AddUint32(&a.index, 1) % uint32(len(a.v))
+
 	return a.v[next]
 }
 
