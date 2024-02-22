@@ -59,7 +59,12 @@ func NewQueueLocalScheduler() *QueueLocalScheduler {
 
 // Schedule 读协程往自定义消息队列写入任务
 func (localScheduler *QueueLocalScheduler) Schedule(task Task) {
-	localScheduler.chTasks <- task
+	select {
+	case localScheduler.chTasks <- task:
+	case <-time.After(6 * time.Second):
+		log.Println("localScheduler.PushTask  Timeout ")
+	}
+
 }
 
 // Sched 消息自定义协程任务
@@ -71,6 +76,7 @@ func (localScheduler *QueueLocalScheduler) Sched() {
 		select {
 		case f := <-localScheduler.chTasks:
 			try(f)
+
 		case <-chDie:
 			return
 		}
@@ -141,6 +147,11 @@ func Close() {
 }
 
 func PushTask(task Task) {
-	chTasks <- task
+
+	select {
+	case chTasks <- task:
+	case <-time.After(6 * time.Second):
+		log.Println("PushTask  Timeout ")
+	}
 	// log.Println("push task success")
 }

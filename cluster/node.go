@@ -409,6 +409,36 @@ func (n *Node) HandleNotify(_ context.Context, req *clusterpb.NotifyMessage) (*c
 	return &clusterpb.MemberHandleResponse{}, nil
 }
 
+func (n *Node) HandleRPC(_ context.Context, req *clusterpb.RPCMessage) (*clusterpb.MemberHandleResponse, error) {
+	handler, found := n.handler.localHandlers[req.Route]
+	if !found {
+		return nil, fmt.Errorf("service not found in current node: %v", req.Route)
+	}
+
+	//
+	if len(req.Sessions) <= 0 {
+		req.Sessions = make(map[int64]string, 0)
+		req.Sessions[req.SessionId] = req.GateAddr
+	}
+
+	// 为多个会话编号生成会话对象
+	var sessions = make([]*session.Session, 0)
+	for k, v := range req.Sessions {
+		s, err := n.findOrCreateSession(k, v)
+		if err != nil {
+			return nil, err
+		}
+		sessions = append(sessions, s)
+	}
+	msg := &message.Message{
+		Type:  message.Notify,
+		Route: req.Route,
+		Data:  req.Data,
+	}
+	n.handler.localProcess(handler, 0, sessions[0], msg, sessions...)
+	return &clusterpb.MemberHandleResponse{}, nil
+}
+
 func (n *Node) HandlePush(_ context.Context, req *clusterpb.PushMessage) (*clusterpb.MemberHandleResponse, error) {
 	s := n.findSession(req.SessionId)
 	if s == nil {

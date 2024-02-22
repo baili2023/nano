@@ -6,7 +6,7 @@ package  common;
 // notify ==>    客户端通知服务端 不需要服务端响应     client to server
 // push  <===     服务端主动向客户端推送         server to client      不需要client先发起 request  主动向客户端推送
 
-option go_package = "./commonpb";
+option go_package = "../commonpb";
 
 //import "google/protobuf/any.proto";
 
@@ -15,4 +15,6 @@ option go_package = "./commonpb";
 message OnErr {
   uint32 code=1;
   string error=2;
+    // 消息标号 无 则不需要  有则需要清除
+  uint64  messageId=3;
 }

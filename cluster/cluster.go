@@ -66,7 +66,7 @@ func (c *cluster) Register(_ context.Context, req *clusterpb.RegisterRequest) (*
 			} else {
 				c.members = append(c.members[:k], c.members[k+1:]...)
 			}
-			break
+			// break
 			//return nil, fmt.Errorf("address %s has registered", req.MemberInfo.ServiceAddr)
 		}
 	}

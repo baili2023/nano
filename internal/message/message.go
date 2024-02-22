@@ -39,7 +39,9 @@ const (
 	Response      = 0x02
 	Push          = 0x03
 	//
-	Kick Type = 0x04
+	Kick = 0x04
+	// 服务之间 RPC 调用
+	RPC = 0x05
 )
 
 const (

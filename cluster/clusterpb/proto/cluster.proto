@@ -51,6 +51,15 @@ message NotifyMessage {
     bytes data = 5;
 }
 
+message RPCMessage {
+    string gateAddr = 1;
+    int64 sessionId = 2;
+    map<int64,string> sessions = 3;
+    string route = 4;
+    bytes data = 5;
+}
+
+
 
 
 message ResponseMessage {
@@ -96,6 +105,7 @@ service Member {
     rpc HandleNotify (NotifyMessage) returns (MemberHandleResponse) {}
     rpc HandlePush (PushMessage) returns (MemberHandleResponse) {}
     rpc HandleResponse (ResponseMessage) returns (MemberHandleResponse) {}
+    rpc HandleRPC (RPCMessage) returns (MemberHandleResponse) {}
     rpc NewMember (NewMemberRequest) returns (NewMemberResponse) {}
     rpc DelMember (DelMemberRequest) returns (DelMemberResponse) {}
     rpc SessionClosed(SessionClosedRequest) returns(SessionClosedResponse) {}

@@ -21,10 +21,7 @@
 package scheduler
 
 import (
-	"fmt"
-	"log"
 	"math"
-	"runtime/debug"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -91,11 +88,11 @@ func (t *Timer) Stop() {
 
 // execute job function with protection
 func safecall(id int64, fn TimerFunc) {
-	defer func() {
-		if err := recover(); err != nil {
-			log.Println(fmt.Sprintf("Handle timer panic: %+v\n%s", err, debug.Stack()))
-		}
-	}()
+	// defer func() {
+	// 	if err := recover(); err != nil {
+	// 		log.Println(fmt.Sprintf("Handle timer panic: %+v\n%s", err, debug.Stack()))
+	// 	}
+	// }()
 
 	fn()
 }

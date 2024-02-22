@@ -179,12 +179,13 @@ func (h *LocalHandler) delMember(addr string) {
 	for name, members := range h.remoteServices {
 		for i, maddr := range members {
 			if addr == maddr.ServiceAddr {
+				log.Println("delMember member  ", members[i].String())
 				if i >= len(members)-1 {
 					members = members[:i]
 				} else {
 					members = append(members[:i], members[i+1:]...)
 				}
-				log.Println("delMember member  ", members[i].String())
+
 			}
 		}
 		if len(members) == 0 {
@@ -344,6 +345,7 @@ func (h *LocalHandler) findMembers(service string) []*clusterpb.MemberInfo {
 
 func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Message, noCopy bool, sds ...pkg.SessionData) error {
 	var err error
+	// TODO ------  将中间这部分逻辑提供出去  作为通过服务名查找RPC Client 对象的函数
 	index := strings.LastIndex(msg.Route, ".")
 	if index < 0 {
 		err = fmt.Errorf(fmt.Sprintf("nano/handler: invalid route %s", msg.Route))
@@ -408,6 +410,8 @@ func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Mess
 	}
 
 	client := clusterpb.NewMemberClient(pool.Get())
+	// -----
+
 	switch msg.Type {
 	case message.Request:
 		request := &clusterpb.RequestMessage{
@@ -417,7 +421,9 @@ func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Mess
 			Route:     msg.Route,
 			Data:      data,
 		}
-		_, err = client.HandleRequest(context.Background(), request)
+		// _, err = client.HandleRequest(context.Background(), request)
+		ctx, _ := context.WithTimeout(context.Background(), time.Second*9)
+		_, err = client.HandleRequest(ctx, request)
 	case message.Notify:
 		// TODO 部署多网关的时候  传递多会话对象的同时 也需要传递多网关地址  因为玩家可能从不同的网关进来的 网关地址应该是不一样的
 		request := &clusterpb.NotifyMessage{
@@ -430,7 +436,10 @@ func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Mess
 		for i := 0; i < len(sds); i++ {
 			request.Sessions[sds[i].SessionId] = sds[i].Addr
 		}
-		_, err = client.HandleNotify(context.Background(), request)
+		// _, err = client.HandleNotify(context.Background(), request)
+		ctx, _ := context.WithTimeout(context.Background(), time.Second*9)
+		_, err = client.HandleNotify(ctx, request)
+
 	}
 
 	if err != nil {

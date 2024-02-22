@@ -38,6 +38,7 @@ func (a *acceptor) Push(route string, v interface{}) error {
 
 // 需要传递多个会话编号时需要填充后续的会话编号 sessionIds 是除去 当前会话对象的其余需要传递的会话对象sid
 // RPC implements the session.NetworkEntity interface
+// TODO  新增一个RPC 消息类型 用于服务跟服务之间的远程通讯 传递数据
 func (a *acceptor) RPC(route string, v interface{}, sds ...pkg.SessionData) error {
 	// TODO: buffer
 	data, err := message.Serialize(v)
